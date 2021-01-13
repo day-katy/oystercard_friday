@@ -29,36 +29,51 @@ describe Oystercard do
   end
 
   describe "#touch_in" do
+  let(:station) { double :station }
     context "when you have enough for a journey" do
       min_balance = Oystercard::MIN_BALANCE
       it "can touch in" do
           subject.top_up(min_balance)
-          subject.touch_in
+          subject.touch_in(station)
           expect(subject).to be_in_journey
+      end
+       it "should remember the entry station" do
+        subject.top_up(min_balance)
+        subject.touch_in(station)
+        expect(subject.entry_station).to eq station
       end
     end
     context "when you don't have enough for a journey" do
       min_balance = Oystercard::MIN_BALANCE
       it 'should raise an error' do
         subject.top_up(min_balance - 0.01)
-        expect { subject.touch_in }.to raise_error "Insufficient funds to touch in. You need at least £#{min_balance} and you have £#{subject.balance}"
+        expect { subject.touch_in(station) }.to raise_error "Insufficient funds to touch in. You need at least £#{min_balance} and you have £#{subject.balance}"
       end
     end
+    
   end
 
   describe '#touch_out' do
+    let(:station) { double :station }
     context "when you have completed a journey you can touch out" do 
       min_balance = Oystercard::MIN_BALANCE
       it 'can touch out' do
           subject.top_up(min_balance)
-          subject.touch_in
+          subject.touch_in(station)
           subject.touch_out
           expect(subject).not_to be_in_journey
         end
 
       it "charges you the fare for your journey" do
         expect { subject.touch_out }.to change{ subject.balance }.by -(min_balance)
-      end   
+      end 
+      
+      it "should have nil as entry station when touched out" do
+        subject.top_up(min_balance)
+          subject.touch_in(station)
+          subject.touch_out
+          expect(subject.entry_station).to eq nil
+      end
       end
   end
 
