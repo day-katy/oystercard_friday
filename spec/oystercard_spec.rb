@@ -4,6 +4,11 @@ describe Oystercard do
 
   # it { is_expected.to respond_to :balance }
   # it { is_expected.to respond_to(:top_up).with(1).argument }
+  describe "initialized state" do
+    it "initializes with empty array" do
+      expect(subject.journey_history).to eq []
+    end
+  end
 
   describe '#balance' do
     subject { Oystercard.new.balance }
@@ -31,18 +36,23 @@ describe Oystercard do
   describe "#touch_in" do
   let(:station) { double :station }
     context "when you have enough for a journey" do
-      min_balance = Oystercard::MIN_BALANCE
+      def touch_in_card
+        min_balance = Oystercard::MIN_BALANCE
+        card = Oystercard.new
+        card.top_up(min_balance)
+        card.touch_in(station)
+        return card
+      end
+      subject {touch_in_card}
+
       it "can touch in" do
-          subject.top_up(min_balance)
-          subject.touch_in(station)
           expect(subject).to be_in_journey
       end
        it "should remember the entry station" do
-        subject.top_up(min_balance)
-        subject.touch_in(station)
         expect(subject.entry_station).to eq station
       end
     end
+
     context "when you don't have enough for a journey" do
       min_balance = Oystercard::MIN_BALANCE
       it 'should raise an error' do
@@ -50,31 +60,54 @@ describe Oystercard do
         expect { subject.touch_in(station) }.to raise_error "Insufficient funds to touch in. You need at least £#{min_balance} and you have £#{subject.balance}"
       end
     end
-    
+
   end
 
   describe '#touch_out' do
     let(:station) { double :station }
-    context "when you have completed a journey you can touch out" do 
+    let(:station1) { double :station }
+    context "when you have completed a journey you can touch out" do
       min_balance = Oystercard::MIN_BALANCE
       it 'can touch out' do
           subject.top_up(min_balance)
           subject.touch_in(station)
-          subject.touch_out
+          subject.touch_out(station)
           expect(subject).not_to be_in_journey
         end
 
       it "charges you the fare for your journey" do
-        expect { subject.touch_out }.to change{ subject.balance }.by -(min_balance)
-      end 
-      
+        expect { subject.touch_out(station) }.to change{ subject.balance }.by -(min_balance)
+      end
+
       it "should have nil as entry station when touched out" do
         subject.top_up(min_balance)
-          subject.touch_in(station)
-          subject.touch_out
-          expect(subject.entry_station).to eq nil
+        subject.touch_in(station)
+        subject.touch_out(station)
+        expect(subject.entry_station).to eq nil
       end
+
+      it { is_expected.to respond_to(:touch_out).with(1).argument }
+      end
+
+      context 'when you have completed a journey' do
+        def prepared_card
+          min_balance = Oystercard::MIN_BALANCE
+          card = Oystercard.new
+          card.top_up(min_balance)
+          card.touch_in(station)
+          card.touch_out(station1)
+          return card
+        end
+        subject {prepared_card}
+        it "will have an exit station" do
+          expect(subject.journey_history[0][:exit_station]).to eq station1
+        end
+        it "stores journey as hash" do
+          expect(subject.journey_history).to eq [{entry_station: station, exit_station: station1}]
+        end
+        it "lengthens journey history array by one" do
+          expect(subject.journey_history.size).to eq 1
+        end
       end
   end
-
 end
