@@ -30,16 +30,16 @@ describe Oystercard do
 
   describe "#touch_in" do
     context "when you have enough for a journey" do
+      min_balance = Oystercard::MIN_BALANCE
       it "can touch in" do
-          min_balance = Oystercard::MIN_BALANCE
           subject.top_up(min_balance)
           subject.touch_in
           expect(subject).to be_in_journey
       end
     end
     context "when you don't have enough for a journey" do
+      min_balance = Oystercard::MIN_BALANCE
       it 'should raise an error' do
-        min_balance = Oystercard::MIN_BALANCE
         subject.top_up(min_balance - 0.01)
         expect { subject.touch_in }.to raise_error "Insufficient funds to touch in. You need at least £#{min_balance} and you have £#{subject.balance}"
       end
