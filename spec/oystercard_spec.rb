@@ -1,15 +1,11 @@
 require 'oystercard'
+require 'journey'
 
 describe Oystercard do
 
   # it { is_expected.to respond_to :balance }
   # it { is_expected.to respond_to(:top_up).with(1).argument }
-  describe "initialized state" do
-    it "initializes with empty array" do
-      expect(subject.journey_history).to eq []
-    end
-  end
-
+  
   describe '#balance' do
     subject { Oystercard.new.balance }
     it { is_expected.to eq 0 }
@@ -27,12 +23,6 @@ describe Oystercard do
     end
   end
 
-  describe '#in_journey?' do
-    it "should initially not be in a journey" do
-      expect(subject).not_to be_in_journey
-    end
-  end
-
   describe "#touch_in" do
   let(:station) { double :station }
     context "when you have enough for a journey" do
@@ -45,9 +35,12 @@ describe Oystercard do
       end
       subject {touch_in_card}
 
+      # let(:journey) { double :journey }
       it "can touch in" do
-          expect(subject).to be_in_journey
+        journey = double(:journey, in_journey?: true)
+        expect(subject).to be_in_journey
       end
+
        it "should remember the entry station" do
         expect(subject.entry_station).to eq station
       end
