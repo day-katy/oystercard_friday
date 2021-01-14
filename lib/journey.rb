@@ -2,14 +2,21 @@ require_relative 'oystercard'
 
 class Journey 
 
-  attr_reader :journey_history, :in_journey
-
-  def initialize 
-    @journey_history = []
-  end 
-
-  def in_journey?
-    @in_journey 
+  def initialize(entry_station)
+    @start_journey = entry_station
   end
 
-end 
+  # def start_journey
+  #   @start_journey = Journey.new
+  # end
+
+  # def end_journey
+  # end
+
+  def fare
+  end
+
+  def complete?
+  end
+
+  end 
