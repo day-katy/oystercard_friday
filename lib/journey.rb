@@ -4,9 +4,13 @@ class Journey
 
   attr_reader :start_station, :end_station
 
-  def initialize(entry_station)
-    @start_station = entry_station
+  def initialize
+    @start_station = nil
     @end_station = nil 
+  end
+
+  def start_journey(entry_station)
+    @start_station = start_station
   end
 
   def end_journey(end_station)

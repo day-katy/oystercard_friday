@@ -71,6 +71,11 @@ describe Oystercard do
   describe '#touch_out' do
     let(:station) { double :station }
     let(:station1) { double :station }
+    # let(:end_journey) {double("end_journey"}
+    # let(:in_journey?) {double :in_journey?}
+   # let(:new_journey) {double("new_journey")}
+   let(:journey) { double }
+   let(:subject) {Oystercard.new(journey)}
     context "when you have completed a journey you can touch out" do
       min_balance = Oystercard::MIN_BALANCE
       it 'can touch out' do
@@ -81,6 +86,9 @@ describe Oystercard do
         end
 
       it "charges you the fare for your journey" do
+        subject.top_up(min_balance)
+        subject.touch_in(station)
+        #allow(new_journey).to receive(:end_journey)
         expect { subject.touch_out(station) }.to change{ subject.balance }.by -(min_balance)
       end
 
