@@ -2,6 +2,9 @@ require_relative 'oystercard'
 
 class Journey 
 
+  MINIMUM_FARE = 1
+  PENALTY_FARE = 6
+
   attr_reader :start_station, :end_station
 
   def initialize
@@ -18,9 +21,11 @@ class Journey
   end
 
   def fare
+    (start_station == nil || end_station == nil) ? PENALTY_FARE : MINIMUM_FARE
   end
 
   def complete?
+    @complete = false
   end
 
   end 

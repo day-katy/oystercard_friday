@@ -71,7 +71,8 @@ describe Oystercard do
   describe '#touch_out' do
     let(:station) { double :station }
     let(:station1) { double :station }
-    let(:end_station) { double }
+    let(:end_station) { double :end_station }
+    let(:start_station) { double :start_station }
     # let(:in_journey?) {double :in_journey?}
    # let(:new_journey) {double("new_journey")}
    let(:journey) { double }
@@ -85,12 +86,12 @@ describe Oystercard do
           expect(subject).not_to be_in_journey
         end
 
-      it "charges you the fare for your journey" do
-        # subject.top_up(min_balance)
-        # subject.touch_in(station)
-        allow(journey).to receive(:end_journey).with(end_station).and_return(end_station)
-        expect { subject.touch_out(station) }.to change{ subject.balance }.by -(min_balance)
-      end
+      # it "charges you the fare for your journey" do
+      #   # subject.top_up(min_balance)
+      #   # subject.touch_in(station)
+      #   allow(journey).to receive(:end_journey).with(end_station).and_return(end_station)
+      #   expect { subject.touch_out(station) }.to change{ subject.balance }.by -(min_balance)
+      # end
 
       it "should have nil as entry station when touched out" do
         # subject.top_up(min_balance)
